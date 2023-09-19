@@ -70,9 +70,23 @@ Answer the following questions below:
 
 - What are some ways to decide which code to test?
 
+  - If you are building an API, test all the routes to make sure they perform as intended
+  - Test for errors that can break your code
+  - Make sure databases are being used properly (inserting data and getting data)
+  - Functionality: application should work as intended
+  - Test for edge cases
+
 - What does `RETURNING` do in SQL? When would you use it?
+
+  - the RETURNING clause is used to return data that was inserted, updated, or deleted
+  - you can use this clause if you want data based on the statement you typed in SQL
+  - used when you need to get specific data after a data modification without making another query
 
 - What are some differences between Web Sockets and HTTP?
 
+  - Websockets: tiny and stateful. They can stay connected. Tells the browser that something has changed. Client and server can send data to each other independently.
+  - HTTP: wordy and heavy protocol. Lots of info in headers. HTTP is stateless (asks for answer, gets answer, hang up connection).
+
 - Did you prefer using Flask over Express? Why or why not (there is no right
   answer here --- we want to see how you think about technology)?
+  - I like writing code in python, so using flask was good. Having a larger application in flask can be a lot though. I had to use blueprints to organize my code because it felt cluttered. I think javascritp is okay but necessary to learn. I might like express over flask because it seems more modular.
