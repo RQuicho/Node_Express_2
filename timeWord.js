@@ -19,6 +19,9 @@
  * 
  */
 
+// assumptions:
+//  - user will provide proper input format ('xx:xx')
+
 // edge cases:
 //  - minute ends in 00: return nothing (midnight or noon) or "o'clock"
 //  - am/pm: if hour digits are b/w 00-11, return am, else, return pm
@@ -38,13 +41,17 @@ const numToWord = (number) => {
     let numWord;
 
     if (num > 0 && num < 10) {
+        // returns 1 - 9 as words
         numWord = ones[num-1];
     } else if (num >= 10 && num < 20) {
+        // returns 10 - 19 as words
         numWord = teens[num % 10];
     } else if (num >= 20 && num < 60) {
         if (num % 10 === 0) {
+            // returns 20, 30, 40... as words
             numWord = tens[Math.floor(num/10) -2];
         } else {
+            // returns 21, 34, 59.. as words
             numWord = tens[Math.floor(num/10) -2] + ' ' + ones[(num % 10) - 1];
         }
     } else {
@@ -53,31 +60,45 @@ const numToWord = (number) => {
     return numWord;
 }
 
-// const timeWord = (time) => {
-//     let hour;
-//     let minute;
-//     let time = `${hour}:${minute}`;
-//     let amPm;
+const morningOrAfternoon = (time) => {
+    // assumes input is 'xx:xx'
+    let hour = +time.substring(0,2);
+    let amPm;
 
-//     // handles am or pm
-//     if (+hour < 12 && +hour > -1) {
-//         amPm = 'am';
-//     } else if (+hour >= 12 && +hour < 24) {
-//         amPm = 'pm';
-//     } else if (time === '00:00' || time === "12:00") {
-//         amPm = '';
-//     } else {
-//         amPm = 'incorrect time input';
-//     }
+    // handles am or pm
+    if (time === '00:00' || time === '12:00') {
+        amPm = '';
+    } else if (hour < 12 && hour > -1) {
+        console.log('hour', hour);
+        amPm = 'am';
+    } else if (hour >= 12 && hour < 24) {
+        console.log('hour', hour);
+        amPm = 'pm';
+    } else {
+        amPm = 'incorrect time input';
+    }
+    return amPm;
+}
 
-//     // converts string number to string word
-//     // maybe create an array that has 01 = one, 12 = twelve. Like a hard-coded database
+const timeWord = (time) => {
+    // assumes input is 'xx:xx' 06:10 -> 'six ten am'
+    let hourWord = numToWord(+time.substring(0,2));
+    let minuteWord = numToWord(+time.substring(3,5));
+    let amOrPm = morningOrAfternoon(time);
+
+    return `${hourWord} ${minuteWord} ${amOrPm}`;
+
+    
+
+    // handles noon and midnight
+    
 
 
 
-//     // return final string
-//     // `${hour} ${minute} ${amPm}`
-// }
+
+    // return final string
+    // `${hour} ${minute} ${amPm}`
+}
 
 
-module.exports = numToWord;
+module.exports = {timeWord, numToWord, morningOrAfternoon};
