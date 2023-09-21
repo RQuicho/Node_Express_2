@@ -49,18 +49,25 @@ describe('#timeword', () => {
   test('it is a function', () => {
     expect(typeof timeWord).toBe('function');
   });
-  // test("two-digit hour will return word string", () => {
-  //   expect('00').toEqual('');
-  //   expect('06').toEqual('six');
-  //   expect('10').toEqual('ten');
-  // });
-  // test("two-digit minute will return word string", () => {
-  //   expect('01').toEqual('oh one');
-  //   expect('18').toEqual('eighteen');
-  // });
-  // test("am or pm", () => {
-  //   expect('00').toEqual('am');
-  //   expect('10').toEqual('am');
-  //   expect('20').toEqual('pm');
-  // });
+  test('midnight and noon', () => {
+    expect(timeWord('00:00')).toEqual('midnight');
+    expect(timeWord('12:00')).toEqual('noon');
+  });
+  test('am times', () => {
+    expect(timeWord('00:12')).toEqual('twelve twelve am');
+    expect(timeWord('06:10')).toEqual('six ten am');
+    expect(timeWord('06:18')).toEqual('six eighteen am');
+    expect(timeWord('06:30')).toEqual('six thirty am');
+    expect(timeWord('10:34')).toEqual('ten thirty four am');
+  });
+  test('pm times', () => {
+    expect(timeWord('12:26')).toEqual('twelve twenty six pm');
+    expect(timeWord('14:45')).toEqual('two forty five pm');
+    expect(timeWord('23:23')).toEqual('eleven twenty three pm');
+  });
+  test("o'clock and oh for minutes", () => {
+    expect(timeWord('01:00')).toEqual("one o'clock am");
+    expect(timeWord('06:01')).toEqual("six oh one am");
+    expect(timeWord('12:09')).toEqual("twelve oh nine pm");
+  });
 });

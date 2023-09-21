@@ -25,15 +25,11 @@
 // edge cases:
 //  - minute ends in 00: return nothing (midnight or noon) or "o'clock"
 //  - am/pm: if hour digits are b/w 00-11, return am, else, return pm
+//  - 12:01 to 23:59 has to return 'twelve oh one pm ' to 'eleven fifty nine pm'
 
-
-// const timeWord = (hour, minute) => {
-//     if (hour.startsWith('0'))
-// }
 
 const numToWord = (number) => {
     let num = +number;
-    // let ones = ['oh one', 'oh two', 'oh three', 'oh four', 'oh five', 'oh six', 'oh seven', 'oh eight', 'oh nine'];
     let ones = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
     let teens = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
     let tens = ['twenty', 'thirty', 'forty', 'fifty'];
@@ -69,10 +65,10 @@ const morningOrAfternoon = (time) => {
     if (time === '00:00' || time === '12:00') {
         amPm = '';
     } else if (hour < 12 && hour > -1) {
-        console.log('hour', hour);
+        // console.log('hour', hour);
         amPm = 'am';
     } else if (hour >= 12 && hour < 24) {
-        console.log('hour', hour);
+        // console.log('hour', hour);
         amPm = 'pm';
     } else {
         amPm = 'incorrect time input';
@@ -82,22 +78,40 @@ const morningOrAfternoon = (time) => {
 
 const timeWord = (time) => {
     // assumes input is 'xx:xx' 06:10 -> 'six ten am'
-    let hourWord = numToWord(+time.substring(0,2));
-    let minuteWord = numToWord(+time.substring(3,5));
+    let hour = +time.substring(0,2);
+    let minute = +time.substring(3,5);
     let amOrPm = morningOrAfternoon(time);
 
-    return `${hourWord} ${minuteWord} ${amOrPm}`;
-
-    
-
     // handles noon and midnight
-    
+    if (time === '00:00') {
+        return 'midnight';
+    } else if (time === '12:00') {
+        return 'noon';
+    }    
 
+    // handles hour
+    let hourWord;
+    if (hour >= 13) {
+        hour = hour - 12;
+        hourWord = numToWord(hour);
+    } else if (hour === 0) {
+        hourWord = 'twelve';
+    } else {
+        hourWord = numToWord(hour);
+    }
 
+    // handles minute
+    let minuteWord;
+    if (minute === 0) {
+        minuteWord = "o'clock";
+    } else if (minute < 10) {
+        minuteWord = `oh ${numToWord(minute)}`;
+    } else {
+        minuteWord = numToWord(minute);
+    }
 
-
-    // return final string
-    // `${hour} ${minute} ${amPm}`
+    let finalOutput = `${hourWord} ${minuteWord} ${amOrPm}`
+    return finalOutput;
 }
 
 
