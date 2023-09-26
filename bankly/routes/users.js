@@ -35,11 +35,7 @@ router.get('/', authUser, requireLogin, async function(req, res, next) {
  *
  */
 
-router.get('/:username', authUser, requireLogin, async function(
-  req,
-  res,
-  next
-) {
+router.get('/:username', authUser, requireLogin, async function(req, res, next) {
   try {
     let user = await User.get(req.params.username);
     return res.json({ user });
@@ -63,11 +59,7 @@ router.get('/:username', authUser, requireLogin, async function(
  *
  */
 
-router.patch('/:username', authUser, requireLogin, requireAdmin, async function(
-  req,
-  res,
-  next
-) {
+router.patch('/:username', authUser, requireLogin, requireAdmin, async function( req, res, next) {
   try {
     if (!req.curr_admin && req.curr_username !== req.params.username) {
       throw new ExpressError('Only  that user or admin can edit a user.', 401);
@@ -94,13 +86,10 @@ router.patch('/:username', authUser, requireLogin, requireAdmin, async function(
  * If user cannot be found, return a 404 err.
  */
 
-router.delete('/:username', authUser, requireAdmin, async function(
-  req,
-  res,
-  next
-) {
+router.delete('/:username', authUser, requireAdmin, async function(req, res, next) {
   try {
-    User.delete(req.params.username);
+    // FIXES BUG #5
+    await User.delete(req.params.username);
     return res.json({ message: 'deleted' });
   } catch (err) {
     return next(err);

@@ -73,6 +73,16 @@ describe("POST /auth/register", function() {
       message: `There already exists a user with username 'u1'`
     });
   });
+
+  // ADDED TEST FOR BAD REQUEST W/ MISSING DATA
+  test("bad request with missing data", async () => {
+    const response = await request(app)
+      .post("/auth/register")
+      .send({
+        username: "u1",       
+      });
+    expect(response.statusCode).toEqual(400);
+  });
 });
 
 describe("POST /auth/login", function() {
@@ -90,6 +100,17 @@ describe("POST /auth/login", function() {
     expect(username).toBe("u1");
     expect(admin).toBe(false);
   });
+
+  // TEST BUG #1
+  test("should not allow login with incorrect username/password", async () => {
+    const response = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "u1",
+        password: "wrong"
+      });
+    expect(response.statusCode).toBe(401);
+  });
 });
 
 describe("GET /users", function() {
@@ -104,6 +125,24 @@ describe("GET /users", function() {
       .send({ _token: tokens.u1 });
     expect(response.statusCode).toBe(200);
     expect(response.body.users.length).toBe(3);
+    // TESTS BUG #3
+    expect(response.body.users).toEqual([
+      {
+        username: "u1",
+        first_name: "fn1",
+        last_name: "ln1"
+      },
+      {
+        username: "u2",
+        first_name: "fn2",
+        last_name: "ln2"
+      },
+      {
+        username: "u3",
+        first_name: "fn3",
+        last_name: "ln3"
+      }
+    ]);
   });
 });
 
@@ -157,6 +196,23 @@ describe("PATCH /users/[username]", function() {
     });
   });
 
+  // TEST BUG #4
+  test("should patch data if logged in", async function() {
+    const response = await request(app)
+      .patch("/users/u1")
+      .send({ _token: tokens.u3, first_name: "new-fn1" }); // u3 is admin
+    expect(response.statusCode).toBe(200);
+    expect(response.body.user).toEqual({
+      username: "u1",
+      first_name: "new-fn1",
+      last_name: "ln1",
+      email: "email1",
+      phone: "phone1",
+      admin: false,
+      password: expect.any(String)
+    });
+  });
+
   test("should disallowing patching not-allowed-fields", async function() {
     const response = await request(app)
       .patch("/users/u1")
@@ -191,6 +247,14 @@ describe("DELETE /users/[username]", function() {
       .send({ _token: tokens.u3 }); // u3 is admin
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "deleted" });
+  });
+
+  // TEST BUG #5
+  test("error if user missing", async function() {
+    const response = await request(app)
+      .delete("/users/notauser")
+      .send({ _token: tokens.notasuer }); // u3 is admin
+    expect(response.statusCode).toBe(401);
   });
 });
 

@@ -1,0 +1,10 @@
+- BUG #1: router.post('/login') route in auth.js does not handle an incorrect login
+  - added await to User.authenticate and wrote a test
+- BUG #2: authUser function in auth.js in middleware folder did not verify the token.
+  - changed let payload = jwt.decode(token) to let payload = jwt.verify(token, SECRET_KEY)
+- BUG #3: getAll function in user model used to give all info on a user.
+  - removed information and only included username, first_name, and last_name. Wrote test for bug #3
+- BUG #4: did not test PATCH route if logged in user, only tested is_admin.
+  - added test to ensure logged in users can edit info
+- BUG #5: router.delete('/:username') route in users.js did not wait for User.delete to finish.
+  - added await to User.delete and wrote test to throw an error if an unregsitered user was passed.
